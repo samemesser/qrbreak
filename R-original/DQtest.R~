@@ -1,0 +1,68 @@
+##' Test for single break over a range of quantiles
+##'
+##' This procedure computes test statistics for the existence of a single break
+##' over an interval of quantiles. The null hypothesis is no break
+##' in conditionals quantiles given a specified quantiles, while the alternative
+##' hypothesis is the existence of breaks.
+##' 
+##' @title DQ test (test for single break over a range of quantiles)
+##' 
+##' @param y A vector of dependent (NT x 1) 
+##' @param x A matrix of regressors (NT x (p-1)), excluding the constant term 
+##' @param q.L The lower end of the range of quantiles 
+##' @param q.R The upper end of the range of quantiles 
+##' @param vec.tau Quantiles of interest 
+##' @param vec.date Estimated break dates 
+##' @param n.size The size of cross sections (N)
+##' 
+##' @return The value of the DQ test
+##' 
+##' @author Tatsushi Oka and Zhongjun Qu
+##' @export
+##' 
+DQtest = function(y, x, q.L, q.R, n.size = 1)
+{
+    ## size
+    t.size = length(y) / n.size ## sub-sample size for time dim.
+
+    ## regressors
+    bigX    = cbind(1, x)
+    p.size  = ncol(bigX)
+    sqXX    = chol( t(bigX) %*% bigX)
+    invsqXX = solve( t(sqXX) )
+
+    ## triming
+    seq.tau = seq(q.L, q.R, by = 1 / t.size)
+    n.tau   = length(seq.tau)
+    Qstat   = matrix(0, n.tau, 1)
+
+    for(k in 1:n.tau){
+
+        ## tau
+        v.tau = seq.tau[k]
+
+        ## fit
+        res  = rq(y ~ 1 + x, tau = v.tau)$residuals
+        temp = (res <= 0.0) - v.tau
+        
+        ## test
+        H1n     = invsqXX %*% t(bigX) %*% temp
+        H1n     = t(H1n)
+        Hlambda = matrix(0, t.size, p.size)
+        difH    = Hlambda
+        for (t in 2:t.size) {
+
+            HH          = t(bigX)[,1:(t*n.size)] %*% temp[1:(t*n.size)]
+            Hlambda[t,] = invsqXX %*% HH
+            difH[t,]    = Hlambda[t,] - (t / t.size) * H1n
+
+        }
+
+        ## maximum given v.tau
+        Qstat[k] = max(abs(difH))
+    }
+
+    ## return
+    return(max(Qstat))                                        
+}
+

@@ -1,0 +1,51 @@
+##' Sequential Test for breaks over a range of quantiles 
+##'
+##' This procedure tests for the existence of L breaks against L+1 breaks
+##' over an interval of quantiles:
+##' H0: L breaks v.s.H1: L+1 breaks.
+##' 
+##' @title Sequential Test for breaks over a range of quantiles
+##' 
+##' @param y A vector of dependent variables (NT x 1) 
+##' @param x A matrix of regressors (NT x p)
+##' @param q.L The lower end of the range of quantiles 
+##' @param q.R The upper end of the range of quantiles 
+##' @param vec.date Estimated break dates under the null hypotheis (Lx1)
+##' @param n.size The size of cross sections (N)
+##' 
+##' @return A value of the DQ test statristics 
+##' 
+##' @author Tatsushi Oka and Zhongjun Qu
+##' @export
+dq.test.lvsl_1 = function(y, x, q.L, q.R, n.size = 1, vec.date) #order of vec.date and n.size adjusted 11/2023
+{
+    ## the number of break dates
+    n.break  = length(vec.date)
+
+    ## test for n.break regimes
+    vec.test = matrix(0, (n.break+1), 1)
+    rem.y    = y
+    rem.x    = x
+    pre.date = c(0, vec.date)
+    for(j in 1:n.break){
+
+        v.date = vec.date[j] - pre.date[j]
+
+        ## split sample given a break date
+        temp   = sample.split(rem.y, rem.x, v.date, n.size)
+        rem.y  = temp$y2
+        rem.x  = temp$x2
+
+        ## test statistics
+       # vec.test[j] = DQtest(temp$y1, temp$x1, q.L, q.R, n.size) switched 11/23
+        vec.test[j] = dq.test.0vs1(temp$y1, temp$x1, q.L, q.R, n.size)
+
+    }
+    ## the last regime
+   # vec.test[(n.break+1)] = DQtest(rem.y, rem.x, q.L, q.R, n.size) switched 11/2023
+    vec.test[(n.break+1)] = dq.test.0vs1(rem.y, rem.x, q.L, q.R, n.size)
+    
+    ## return: maximum over regimes
+    return( max(vec.test) ) 
+}
+

@@ -1,0 +1,42 @@
+##' Ciritical Values for DQ test 
+##'
+##' This function calculates ciritical values for sequential DQ test for
+##' the null hypothesis of L breaks and the alternatative hypothesis of L+1 breaks.
+##' 
+##' @title Ciritical Values for DQ test
+##' 
+##' @param n.break the number of breaks under the null hypothesis.
+##' @param p.size the number of regressors 
+##' @param q.L The lower end of the range of quantiles 
+##' @param q.R The upper end of the range of quantiles 
+##' @param d.Sym
+##' 
+##' @return a 3x1 vector of critical values at 10%, 5%, 1% significance level
+##' 
+##' @author Tatsushi Oka and Zhongjun Qu
+##' @export
+##' 
+get.cv.dq = function(n.break, p.size, q.L, q.R, d.Sym=TRUE)
+{
+    ## row.beg = 4 * (p.size-1) + 4 # the first three lines include q.L, q.R &  #test
+    ## row.end = 4 * (p.size-1) + 6 
+    ## vec.cv  = mat.cv[row.beg:row.end, n.break]
+
+    if (d.Sym == TRUE){
+
+        ## response surface
+        vec.cv = dq.res.surface.r(p.size, n.break, q.L, q.R)
+
+    } else {
+
+        file.name = paste('table.cv.DQ', q.L, '_', q.R , '_', p.size, '.txt', sep='')
+        cat('Note: DQ test uses critical vlues from', file.name, ' \n')
+        mat.cv = as.matrix(read.table(file.name, header=T), ncol = 3)
+        vec.cv = mat.cv[4:6,(n.break+1)] 
+
+    }
+
+    ## return
+    return(vec.cv)
+}
+

@@ -1,0 +1,45 @@
+##' Confidence intervals for break dates
+##'
+##' This procedure estimates the coefficients conditional on estimated break dates.
+##' Note: the results are in terms of break sizes
+##' 
+##' @title Confidence intervals for break dates 
+##' @param y A vector of dependent ($NT \times 1$) 
+##' @param x A matrix of regressors (NT x p)
+##' @param v.tau the (single) quantile of interest
+##' @param vec.date Estimated break dates 
+##' @param n.size The size of cross sections (N)
+##' 
+##' @return object from quantile regression estimates, rq(), with structural breaks.
+##' 
+##' @author Tatsushi Oka and Zhongjun Qu
+##' @export
+
+rq.est.full = function(y, x, v.tau, vec.date, n.size)
+{
+    ## add an intercept
+    x.1 = cbind(1, x)
+
+    ## size and # breaks
+    nt.size = length(y)
+    t.size  = nt.size / n.size
+    p.size  = ncol(x.1)
+    n.break = length(vec.date)
+
+    ## note: matrix looks like stairs to obtain break sizes
+    b.size = matrix(0, nt.size, (n.break*p.size)) 
+    for(i in 1:n.break){
+        r.beg = n.size * vec.date[i] + 1
+        c.beg = p.size * (i -1) + 1
+        c.end = p.size *  i
+        b.size[r.beg:nt.size,c.beg:c.end] = x.1[r.beg:nt.size,]
+    }
+    big.x = cbind(x, b.size)
+    
+    ## estimation
+    fit = rq(y ~ big.x, tau = v.tau)   ## w/o intercepts b/c rq() adds it
+
+    ## return
+    return(fit)
+}
+
