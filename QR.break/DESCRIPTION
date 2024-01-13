@@ -1,0 +1,21 @@
+Package: QR.break
+Title: Structural Breaks in Quantile Regression
+Version: 1.0.1
+Authors@R: c(
+    person("Tatsushi", "Oka", , "oka.econ@gmail.com", role = c("aut", "cre")),
+    person("Zhongjun", "Qu", , "qu@bu.edu", role = "aut")
+  )
+Description: Estimation and inference methods for quantile regression with
+    multiple structural breaks. [Complete this with a full description of
+    your package functionality.]
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: 
+    quantreg,
+    SparseM
+Depends: 
+    R (>= 2.10)
+LazyData: true

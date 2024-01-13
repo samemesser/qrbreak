@@ -1,0 +1,46 @@
+##' Confidence intervals for break dates
+##'
+##' This procedure obtains the values of the objective function
+##' given permissible partitions.
+##' 
+##' @title Confidence intervals for break dates 
+##' @param y   A vector of dependent variables (NT x 1) 
+##' @param x   A matrix of regressors (NT x p)
+##' @param vec.tau Quantiles of interest 
+##' @param vec.date Estimated break dates 
+##' @param n.size The size of cross sections (n.size=1 by default)
+##' @param trim.size The triming size 
+##' @param last SOMETHING
+##' 
+##' @return A matrix in which the 1st column includes break dates; 2nd and 3rd columns include confidence intervals
+##' 
+##' @author Tatsushi Oka and Zhongjun Qu
+##' @export
+gen.mat.rho = function(y, x, vec.tau, n.size=1, trim.size, start, last)
+{
+    ## size
+    n.tau = length(vec.tau)
+
+    ## storage
+    mat.rho = matrix(0, last, n.tau)
+
+    ## quantile regression
+    col01 = n.size * (start - 1) + 1
+    loc01 = start + trim.size - 1      ## the end of sample: start
+    loc02 = last                       ## the end of sample: final
+    for(j in loc01:loc02){
+        col02 = n.size * j
+
+        ## calcuate rho for each quntile
+        temp.rho = matrix(0, n.tau, 1)
+        for(k in 1:n.tau){
+            y.temp = y[col01:col02]
+            x.temp = x[col01:col02,]
+            mat.rho[j,k] = rq(y.temp ~ x.temp, tau = vec.tau[k])$rho
+        }
+    }
+
+    ## return
+    return(mat.rho)
+}
+
