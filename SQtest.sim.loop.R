@@ -6,12 +6,17 @@ p.max<-20 # maximum number of parameters allowed to change
 
 #this program will create a text file of critical values at 1,5, and 10 percent levels.
 
+#Load functions
 source("CV.R")
 
+#Change to critical value folder
+setwd("./crit_vals")
+
 for (qtl in 1:length(tau.set)) {
-  for (parm.chg in 1:p.max) {
+  for (parm.chg in 2:p.max) {
+    cat("Function Call: CV(", parm.chg, ",", m.max, ",",  tau.set[qtl], ")")
     cvs <-CV(parm.chg, m.max, tau.set[qtl])  
   }
 }
 
-
+setwd("..")
