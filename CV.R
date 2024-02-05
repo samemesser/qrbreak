@@ -36,7 +36,7 @@ CV = function(p.size, m.max, vec.tau)
     n.a   = length(vec.a)
 
     ## probablity critical value
-    vec.nn = seq(1, m.max, by = 1) 
+    vec.nn = seq(0, m.max, by = 1) # Adjust to 0 for the 0 vs 1 test. 
     mat.prob = matrix(0, 3, m.max)
     mat.prob[1,] = 0.90 ^ (1 / vec.nn)
     mat.prob[2,] = 0.95 ^ (1 / vec.nn)
