@@ -47,3 +47,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Old CV file for testing
+table.cv.SQtest010910.txt
