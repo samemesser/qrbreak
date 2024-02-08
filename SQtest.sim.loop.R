@@ -9,11 +9,11 @@ p.max<-20 # maximum number of parameters allowed to change
 source("CV.R")
 
 #Change to critical value folder
-setwd("./crit_vals_updated")
+setwd("./crit_vals")
 
-for (parm.chg in 2:p.max) {
-  cat("Function Call: CV(", parm.chg, ",", m.max, ",",  tau.set[qtl], ") \n")
-  cvs <-CV(parm.chg, m.max, tau.set[qtl])  
+for (parm.chg in 1:1) {
+  cat("Function Call: CV(", parm.chg, ", ", m.max, ", ",  0.5, ") \n", sep = "")
+  cvs <-CV(parm.chg, m.max, 0.5)  
 }
 
 
